@@ -1,0 +1,1 @@
+[Посилання на кошторис](https://9b56e8e8-22f4-43c7-a918-3f65448f6cea.filesusr.com/ugd/532a0f_825a84c0de0547c79466b84281f951a4.pdf)
