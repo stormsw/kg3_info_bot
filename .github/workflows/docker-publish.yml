@@ -17,7 +17,7 @@ on:
 
 env:
   # Use docker.io for Docker Hub if empty
-  REGISTRY: docker.io
+  REGISTRY: index.docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
   GHCR_USER: ${{ github.actor }}
@@ -42,9 +42,9 @@ jobs:
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        uses: azure/docker-login@v1
         with:
-          registry: ${{ env.REGISTRY }}
+          login-server: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKERHUB_TOKEN }}
           password: ${{ secrets.DOCKERHUB_USERNAME }}
 
