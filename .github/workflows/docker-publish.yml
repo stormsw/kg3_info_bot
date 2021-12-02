@@ -46,7 +46,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           docker build . -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.sha }}
-          docker push ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }} --all-tags
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }} --all-tags
 
       # login to azure
       - name: Azure Login
