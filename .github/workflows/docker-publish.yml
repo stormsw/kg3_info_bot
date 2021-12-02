@@ -45,9 +45,7 @@ jobs:
       - name: Build and pub
         if: github.event_name != 'pull_request'
         run: |
-          docker build . -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.sha }} \
-            -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:latest \
-            -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.head_ref }}        
+          docker build . -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.sha }}
           docker push ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }} --all-tags
 
       # login to azure
