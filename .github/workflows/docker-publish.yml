@@ -17,12 +17,9 @@ on:
 
 env:
   # Use docker.io for Docker Hub if empty
-  REGISTRY: index.docker.io
+  REGISTRY: registry-1.docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  GHCR_REG: ghcr.io
-  GHCR_USER: ${{ github.actor }}
-  GHCR_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
   AZ_RES_GRP: KG3InfoBot
   AZ_LOC: westeurope
   AZ_CONTAINER_GROUP_INSTANCE: kg3-info-bot
@@ -49,7 +46,9 @@ jobs:
       - name: Build and pub
         if: github.event_name != 'pull_request'
       - run: |
-          docker build . -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.sha }} -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:latest -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.head_ref }}        
+          docker build . -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.sha }} \
+            -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:latest \
+            -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.head_ref }}        
           docker push ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }} --all-tags
       
       # login to azure
@@ -57,7 +56,7 @@ jobs:
       - uses: Azure/login@v1
         with:
           # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
-          creds: ${{ secrets.AZURE_CREDS }}# optional
+          creds: ${{ secrets.AZURE_CREDS }}
 
       - name: Deploy to Azure Container Instances
         uses: Azure/aci-deploy@v1
@@ -67,7 +66,7 @@ jobs:
           # Number of CPU Cores Required
           cpu: 0.25
           # Specify the fully qualified container image name. For example, "myregistry.azurecr.io/nginx:latest" or "python:3.7.2-alpine/"
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest 
+          image: ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.head_ref }} 
           # Location where the Container will be deployed
           location: ${{ env.AZ_LOC }}
           # Required Memory of the Containers in GB, accurate to one decimal place

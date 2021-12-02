@@ -2,7 +2,7 @@
 name = "kg3_info_bot"
 version = "0.1.0"
 description = ""
-authors = ["Oleksand Varchenko <oleksandr.varchenko@globallogic.com>"]
+authors = ["Alexander Varchenko <alexander.varchenko@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
