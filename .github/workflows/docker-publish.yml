@@ -6,14 +6,14 @@ name: Docker
 # documentation.
 
 on:
-#   schedule:
-#     - cron: '42 10 * * *'
+  #   schedule:
+  #     - cron: '42 10 * * *'
   push:
-    branches: [ master ]
+    branches: [master]
     # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+    tags: ["v*.*.*"]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -26,7 +26,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-20.04
     permissions:
       contents: read
@@ -35,14 +34,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
+
       - name: Login to DockerHub
         uses: azure/docker-login@v1
         with:
           login-server: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
+
       - name: Build and pub
         if: github.event_name != 'pull_request'
         run: |
@@ -50,7 +49,7 @@ jobs:
             -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:latest \
             -t ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.head_ref }}        
           docker push ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }} --all-tags
-      
+
       # login to azure
       - name: Azure Login
         uses: Azure/login@v1
@@ -60,29 +59,29 @@ jobs:
 
       - name: Deploy to Azure Container Instances
         uses: Azure/aci-deploy@v1
-          with:
-            # Name of the Resource Group in which the Container Instance will be created
-            resource-group: ${{ env.AZ_RES_GRP }}
-            # Number of CPU Cores Required
-            cpu: 0.25
-            # Specify the fully qualified container image name. For example, "myregistry.azurecr.io/nginx:latest" or "python:3.7.2-alpine/"
-            image: ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.head_ref }} 
-            # Location where the Container will be deployed
-            location: ${{ env.AZ_LOC }}
-            # Required Memory of the Containers in GB, accurate to one decimal place
-            memory: 0.5 # optional, default is 1.5
-            # Name of the Container Group Instance
-            name: ${{ env.AZ_CONTAINER_GROUP_INSTANCE }}
-            # The OS type of the Containers. Accepted Values are  { Linux, Windows }
-            os-type: Linux # optional, default is Linux
-            # The container image registry login server
-            # registry-login-server: # optional, default is 
-            # Username to log in Container Image Registry Server
-            # registry-username: # optional, default is 
-            # Password to log in Container Image Registry Server
-            # registry-password: # optional, default is           
-            # List of secure environment variables for the container. Space seperated values in "key=value" format
-            secure-environment-variables: "API-KEY=${{ secrets.API_KEY }}"
+        with:
+          # Name of the Resource Group in which the Container Instance will be created
+          resource-group: ${{ env.AZ_RES_GRP }}
+          # Number of CPU Cores Required
+          cpu: 0.25
+          # Specify the fully qualified container image name. For example, "myregistry.azurecr.io/nginx:latest" or "python:3.7.2-alpine/"
+          image: ${{ env.REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.head_ref }}
+          # Location where the Container will be deployed
+          location: ${{ env.AZ_LOC }}
+          # Required Memory of the Containers in GB, accurate to one decimal place
+          memory: 0.5 # optional, default is 1.5
+          # Name of the Container Group Instance
+          name: ${{ env.AZ_CONTAINER_GROUP_INSTANCE }}
+          # The OS type of the Containers. Accepted Values are  { Linux, Windows }
+          os-type: Linux # optional, default is Linux
+          # The container image registry login server
+          # registry-login-server: # optional, default is
+          # Username to log in Container Image Registry Server
+          # registry-username: # optional, default is
+          # Password to log in Container Image Registry Server
+          # registry-password: # optional, default is
+          # List of secure environment variables for the container. Space seperated values in "key=value" format
+          secure-environment-variables: "API-KEY=${{ secrets.API_KEY }}"
       # Logout
       - name: Azure CLI script
         uses: azure/CLI@v1
